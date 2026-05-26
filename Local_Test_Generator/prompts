@@ -1,0 +1,57 @@
+**Prompt 1-**
+
+
+
+ I want you to basically follow the rules I'm going to give you in the below command. Okay? Please understand them and when you're ready, let's start phase one, where we will be. You will be asking me questions about what we are developing , #### **🟢 **Protocol 0: Initialization (Mandatory)
+
+- Markdown -> normal text file with formatting (git), os FORMAT
+- Before any code is written or tools are built (.md)
+- Create:
+    - `task_plan.md`  → Phases, goals, and checklists
+    - `findings.md`  → Research, discoveries, constraints
+    - `progress.md`  → What was done, errors, tests, results
+    - `context.md`  -> tell him to keep adding the short context or what you are doing or have done.
+
+- **Halt Execution** You are strictly forbidden from writing scripts or code in Discovery Questions are answered.
+- `task_plan.md`  has an approved Blueprint.
+
+
+**Prompt 2-**
+Core Purpose: I will be generating API test cases and web application test cases. Functional and non-functional, both of them. 
+
+Input  : user will only give you the requirement Jira requirements. He will copy paste or he will give you the inputs through the chat or he will upload a requirement documents. 
+
+LLM Integration: we will support the Ollama API, LM Studio API, Grok API, OpenAI, Claude API, as well as Gemini API in the settings window. We will also support local llm like ollama, lmstudio. I have Ollama and/or LmStudio installed locally . 
+There should be an option to choose whether to use Local LLM or LLM using api key
+App should auto-detect the local llm and list in the dropdown.  
+
+What are the types of configurations you can see in the design folder? @contextScopeItemMention.
+
+Tech Stack Preference: create a Node.js web application. It will be in TypeScript. Okay, you can have TypeScript also. Frontend, you can make it in React.
+
+History & Storage: history persist across sessions. history should show prompt, generated tests, files used 
+
+Output: you will be providing the answers or the test cases in a Jira format. Please remember, you are the one who will be providing the functional test cases. You can also provide non-functional test cases as well
+There should be copy to clipboard button
+User should be able to download as file also.
+Test case should be in tabular format.
+
+**Prompt 3- **
+File Upload Formats: User may upload .pdf, .docx.txt, or .xlsx, images/screenshots
+
+Jira Test Case Format — Columns: Standard Jira-style test case format — should be use these columns
+
+Download Format: csv, Excel (.xlsx)
+
+Storage: No storage on disk.
+
+Authentication: No authentication
+
+
+**Prompt 4-**
+Test Case Generation Behavior: One shot
+Non-Functional Test Cases: All type
+Model Selection on Main Screen: 
+Model Selection on Main Screen: users always go to the Settings page to change the active model
+
+Prompt Templates: Free-test prompt area is sufficient

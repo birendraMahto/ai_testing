@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build output
+dist/
+client/dist/
+server/dist/
+
+# Vite cache
+client/.vite/
+client/node_modules/.vite/
+client/node_modules/.tmp/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp uploads
+server/uploads/
+
+# TypeScript build info
+*.tsbuildinfo
