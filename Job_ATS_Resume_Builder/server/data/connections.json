@@ -1,0 +1,20 @@
+[
+  {
+    "id": "dd7f336b-90c0-48af-9d8a-82416e4f48cd",
+    "connectionName": "Local LLMs",
+    "provider": "ollama",
+    "modelName": "gemma:7b",
+    "apiKey": "",
+    "createdAt": "2026-07-11T14:40:04.979Z",
+    "updatedAt": "2026-07-11T14:40:04.979Z"
+  },
+  {
+    "id": "7f2605ed-a7b5-4751-af42-0138f1026271",
+    "connectionName": "Ollama - gemma:7b",
+    "provider": "ollama",
+    "modelName": "gemma:7b",
+    "apiKey": "",
+    "createdAt": "2026-07-11T14:40:26.481Z",
+    "updatedAt": "2026-07-11T15:07:29.649Z"
+  }
+]
