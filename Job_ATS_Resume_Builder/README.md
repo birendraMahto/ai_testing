@@ -4,8 +4,11 @@ An intelligent web application that analyzes your resume against a job descripti
 
 ## Features
 
-- **ATS Resume Analysis:** Upload your resume (PDF/DOCX) and paste a job description. The app acts as an Applicant Tracking System (ATS), cross-referencing keywords and providing a detailed score out of 10.
+- **ATS Resume Analysis:** Upload your resume (PDF/DOCX) and paste a job description or URL. The app acts as an Applicant Tracking System (ATS), cross-referencing keywords and providing a detailed score out of 10.
 - **AI Resume Builder:** After the analysis, with a single click, generate an optimized version of your resume that integrates missing keywords and enhances bullet points, all while **strictly maintaining the original layout and format**.
+- **Cover Letter Generator:** Automatically craft highly tailored cover letters by cross-referencing your resume against the provided job description or job URL.
+- **Follow Up Email Generator:** Generate a professional sequence of cold follow-up emails directed at the company's HR or hiring team based on your profile and the job requirements.
+- **URL Scraping:** Automatically fetch and extract job descriptions from provided LinkedIn or company job URLs.
 - **Local & Cloud LLMs:** Power the analysis using top-tier Cloud APIs (OpenAI, Anthropic, Google Gemini) or run entirely locally and privately using **Ollama** or **LM Studio**.
 - **One-Click Local Model Scan:** Automatically detect and populate all of your locally installed models from Ollama and LM Studio straight into the app.
 - **Premium UI:** Built with a stunning dark-mode/light-mode ready interface, utilizing dynamic glassmorphism and modern aesthetics.

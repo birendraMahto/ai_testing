@@ -37,6 +37,7 @@ export interface AnalysisResult {
   connectionName: string;
   jobDescription: string;
   resumeFileName: string;
+  originalResumeText: string;
   scores: ResumeScores;
   feedback: ResumeFeedback;
   rawResponse: string;

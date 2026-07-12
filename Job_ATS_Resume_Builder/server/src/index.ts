@@ -6,6 +6,8 @@ import connectionsRouter from './routes/connections';
 import analyzeRouter from './routes/analyze';
 import buildRouter from './routes/build';
 import historyRouter from './routes/history';
+import coverLetterRouter from './routes/coverLetter';
+import followUpRouter from './routes/followUp';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -29,6 +31,8 @@ app.use('/api/connections', connectionsRouter);
 app.use('/api/analyze', analyzeRouter);
 app.use('/api/build-resume', buildRouter);
 app.use('/api/history', historyRouter);
+app.use('/api/cover-letter', coverLetterRouter);
+app.use('/api/follow-up', followUpRouter);
 
 // Health check
 app.get('/api/health', (_req, res) => {

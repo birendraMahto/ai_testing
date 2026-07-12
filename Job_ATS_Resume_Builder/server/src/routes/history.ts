@@ -28,4 +28,11 @@ router.get('/:id', (req: Request, res: Response) => {
   res.json({ success: true, data: result });
 });
 
+// DELETE /api/history — Clear all history
+router.delete('/', (_req: Request, res: Response) => {
+  const { clearHistory } = require('../db/store');
+  clearHistory();
+  res.json({ success: true, message: 'History cleared successfully' });
+});
+
 export default router;

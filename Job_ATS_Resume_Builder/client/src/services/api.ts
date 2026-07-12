@@ -92,4 +92,33 @@ export const api = {
   getHistory: () => request<any[]>('/history'),
 
   getHistoryDetail: (id: string) => request<any>(`/history/${id}`),
+
+  clearHistory: () => request<{ message: string }>('/history', { method: 'DELETE' }),
+
+  // Cover Letter
+  generateCoverLetter: (formData: FormData) =>
+    request<{ content: string }>('/cover-letter', {
+      method: 'POST',
+      body: formData,
+    }),
+
+  // Follow Up Email
+  generateFollowUp: (formData: FormData) =>
+    request<{ content: string }>('/follow-up', {
+      method: 'POST',
+      body: formData,
+    }),
+
+  // Generic Download
+  downloadDocument: async (content: string, filename: string = 'document.docx') => {
+    // We can reuse the build-resume download logic by creating a temporary mock resume, 
+    // OR we can create a generic download endpoint in backend. Let's assume we create a generic download endpoint.
+    const res = await fetch(`${API_BASE}/build-resume/download-text`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content, filename }),
+    });
+    if (!res.ok) throw new Error('Download failed');
+    return res.blob();
+  },
 };

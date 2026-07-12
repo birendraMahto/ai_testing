@@ -64,6 +64,7 @@ router.post('/', upload.single('resume'), async (req: Request, res: Response) =>
       connectionName: connection.connectionName,
       jobDescription,
       resumeFileName: file.originalname,
+      originalResumeText: resumeText,
       scores,
       feedback,
       rawResponse,

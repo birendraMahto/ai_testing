@@ -123,3 +123,38 @@ Use symbols like ✅ for positive aspects and 🙈 for areas of improvement.
 2. Act as an ATS (Applicant Tracking System) checking for keyword presence.
 3. Follow the full scoring format provided above.`;
 }
+
+export function buildCoverLetterPrompt(resumeText: string, jobDescription: string): string {
+  const promptPath = path.join(__dirname, '..', '..', '..', 'prompts', 'cover-letter-prompt.md');
+  let template: string;
+
+  try {
+    template = fs.readFileSync(promptPath, 'utf-8');
+  } catch {
+    template = `# Cover Letter Prompt
+Write a cover letter for a job application using the following details:
+## Inputs
+1. **Job Description:** \${jd}
+2. **Resume Details:** \${resume}`;
+  }
+
+  // Replace placeholders with actual text
+  return template.replace('${jd}', jobDescription).replace('${resume}', resumeText);
+}
+
+export function buildFollowUpPrompt(resumeText: string, jobDescription: string): string {
+  const promptPath = path.join(__dirname, '..', '..', '..', 'prompts', 'cold-email-prompt.md');
+  let template: string;
+
+  try {
+    template = fs.readFileSync(promptPath, 'utf-8');
+  } catch {
+    template = `# Cold Email Generation Prompt
+## Inputs
+1. **Job Description:** \${jd}
+2. **Resume Details:** \${resume}`;
+  }
+
+  // Replace placeholders with actual text
+  return template.replace('${jd}', jobDescription).replace('${resume}', resumeText);
+}

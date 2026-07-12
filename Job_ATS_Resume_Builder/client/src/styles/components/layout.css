@@ -116,8 +116,10 @@
 }
 
 .sidebar__nav-btn--active {
-  background: rgba(124, 131, 255, 0.1);
+  background: rgba(124, 131, 255, 0.15);
   color: var(--accent-primary);
+  font-weight: 600;
+  box-shadow: inset 4px 0 0 var(--accent-primary);
 }
 
 .sidebar__nav-btn svg {

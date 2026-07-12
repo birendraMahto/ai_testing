@@ -96,6 +96,10 @@ export function createHistory(result: AnalysisResult): AnalysisResult {
   return result;
 }
 
+export function clearHistory(): void {
+  writeJSON(HISTORY_FILE, []);
+}
+
 // ===== Built Resumes =====
 export function getAllResumes(): BuiltResume[] {
   return readJSON<BuiltResume>(RESUMES_FILE);

@@ -42,7 +42,7 @@ router.post('/', async (req: Request, res: Response) => {
 
     // Build prompt for resume improvement
     const prompt = buildResumeBuilderPrompt(
-      analysis.rawResponse, // Use the original analysis which contains the resume text
+      analysis.originalResumeText || analysis.rawResponse, // Pass the original resume text (fallback to rawResponse for old records)
       analysis.jobDescription,
       analysis.rawResponse
     );
@@ -106,6 +106,29 @@ router.post('/download', async (req: Request, res: Response) => {
       // Default: return content as text for PDF generation on client
       res.json({ success: true, data: { content: directResume.content } });
     }
+  } catch (error: any) {
+    console.error('Download error:', error);
+    res.status(500).json({
+      success: false,
+      error: `Download failed: ${error.message}`,
+    });
+  }
+});
+
+// POST /api/build-resume/download-text — Download generic text as DOCX
+router.post('/download-text', async (req: Request, res: Response) => {
+  try {
+    const { content, filename = 'document.docx' } = req.body;
+
+    if (!content) {
+      res.status(400).json({ success: false, error: 'Content is required' });
+      return;
+    }
+
+    const buffer = await generateDOCX(content);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(buffer);
   } catch (error: any) {
     console.error('Download error:', error);
     res.status(500).json({
