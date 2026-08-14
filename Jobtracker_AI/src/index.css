@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased dark:bg-[#0b0f19] dark:text-slate-100 transition-colors duration-200;
+  }
+}
+
+/* Custom Scrollbar Styling for Horizontal Board & Vertical Cards */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(51, 65, 85, 0.6);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.6);
+}
+
+/* Always Visible Horizontal Board Scrollbar */
+.custom-scrollbar-x::-webkit-scrollbar {
+  height: 10px;
+}
+
+.custom-scrollbar-x::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.6);
+  border-radius: 9999px;
+}
+
+.dark .custom-scrollbar-x::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar-x::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar-x::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(90deg, #4f46e5, #7c3aed);
+}
