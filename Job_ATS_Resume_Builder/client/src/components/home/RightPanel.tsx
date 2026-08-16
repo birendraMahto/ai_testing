@@ -23,30 +23,87 @@ export function RightPanel({ analysis, loading }: RightPanelProps) {
   const [showResume, setShowResume] = useState(false);
   const [buildError, setBuildError] = useState<string | null>(null);
 
-  if (loading) {
+  if (loading || !analysis) {
     return (
-      <aside className="right-panel">
-        <div className="right-panel__empty">
-          <div className="spinner spinner--lg" style={{ marginBottom: '1rem' }} />
-          <p className="right-panel__empty-title">Analyzing Resume...</p>
-          <p className="right-panel__empty-desc">
-            Please wait while AI evaluates your resume against the job description
-          </p>
-        </div>
-      </aside>
-    );
-  }
+      <aside className="right-panel" style={{ padding: '2rem 1.5rem', background: 'var(--bg-tertiary)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        
+        {/* What You'll Get */}
+        <div className="card animate-fadeIn">
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-primary)' }}>What You'll Get</h3>
+          
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--accent-purple)', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+            </div>
+            <div>
+              <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>ATS Compatibility Score</h4>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>See how well your resume passes ATS filters</p>
+            </div>
+          </div>
 
-  if (!analysis) {
-    return (
-      <aside className="right-panel">
-        <div className="right-panel__empty">
-          <ClipboardList className="right-panel__empty-icon" />
-          <p className="right-panel__empty-title">Resume Score</p>
-          <p className="right-panel__empty-desc">
-            Submit a job description and resume to see your ATS score analysis here
-          </p>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#e0f2fe', color: '#0ea5e9', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            </div>
+            <div>
+              <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Keyword & Skills Insights</h4>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Find missing keywords and optimize content</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#dcfce7', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <div>
+              <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Detailed Improvement Tips</h4>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Actionable suggestions to strengthen your resume</p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#ffedd5', color: '#f97316', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="22" y1="12" x2="18" y2="12"></line><line x1="6" y1="12" x2="2" y2="12"></line><line x1="12" y1="6" x2="12" y2="2"></line><line x1="12" y1="22" x2="12" y2="18"></line></svg>
+            </div>
+            <div>
+              <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Job Match Score</h4>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>See how well your profile matches the role</p>
+            </div>
+          </div>
         </div>
+
+        {/* Resume Score Preview */}
+        <div className="card animate-fadeIn">
+          <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.5rem', color: 'var(--text-primary)' }}>Resume Score Preview</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '1rem 0' }}>
+            {loading ? (
+               <div className="spinner spinner--lg" style={{ marginBottom: '1.5rem', width: '80px', height: '80px', borderWidth: '4px' }} />
+            ) : (
+               <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '4px dashed var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                 <span style={{ fontSize: '1.5rem', color: 'var(--text-muted)', fontWeight: 800 }}>--</span>
+               </div>
+            )}
+            <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.5rem', textAlign: 'center' }}>
+              {loading ? 'Analyzing...' : 'Your ATS Score will appear here'}
+            </h4>
+            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', maxWidth: '200px' }}>
+              {loading ? 'Please wait while AI evaluates your resume against the job description.' : 'Submit a job description and resume to get your score'}
+            </p>
+          </div>
+        </div>
+
+        {/* Enterprise Grade Security */}
+        <div style={{ background: 'var(--accent-purple)', borderRadius: '12px', padding: '1.25rem', display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+           <div style={{ color: 'var(--accent-primary)', flexShrink: 0 }}>
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+           </div>
+           <div>
+             <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>Enterprise Grade Security</h4>
+             <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>We follow industry best practices to keep your data safe and private.</p>
+             <a href="#" style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600, textDecoration: 'none' }}>Learn more &rarr;</a>
+           </div>
+        </div>
+
       </aside>
     );
   }

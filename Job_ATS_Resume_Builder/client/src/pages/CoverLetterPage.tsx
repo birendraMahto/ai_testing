@@ -25,7 +25,7 @@ export function CoverLetterPage() {
 
   return (
     <>
-      <Header title="Resume Builder" />
+      <Header title="Job Ready.AI" />
       <div className="app-layout">
         <LeftSidebar />
         <CoverLetterPanel onGenerate={handleGenerate} isLoading={isGenerating} />

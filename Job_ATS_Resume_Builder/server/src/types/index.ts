@@ -9,7 +9,7 @@ export interface LLMConnection {
   updatedAt: string;
 }
 
-export type LLMProvider = 'openai' | 'anthropic' | 'gemini' | 'ollama' | 'lmstudio';
+export type LLMProvider = 'openai' | 'anthropic' | 'gemini' | 'groq' | 'kimik2' | 'ollama' | 'lmstudio';
 
 export interface TestConnectionRequest {
   provider: LLMProvider;
@@ -85,18 +85,28 @@ export interface ProviderModels {
 export const PROVIDER_MODELS: ProviderModels[] = [
   {
     provider: 'openai',
-    displayName: 'OpenAI',
-    models: ['gpt-4o-mini', 'gpt-3.5-turbo'],
+    displayName: 'Chat GPT',
+    models: ['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo'],
   },
   {
     provider: 'anthropic',
-    displayName: 'Anthropic (Claude)',
-    models: ['claude-3-haiku-20240307'],
+    displayName: 'Claude',
+    models: ['claude-3-5-sonnet-20240620', 'claude-3-haiku-20240307'],
   },
   {
     provider: 'gemini',
-    displayName: 'Google (Gemini)',
+    displayName: 'Gemini',
     models: ['gemini-2.0-flash', 'gemini-1.5-flash'],
+  },
+  {
+    provider: 'groq',
+    displayName: 'Groq',
+    models: ['llama3-8b-8192', 'llama3-70b-8192', 'mixtral-8x7b-32768', 'gemma2-9b-it'],
+  },
+  {
+    provider: 'kimik2',
+    displayName: 'kimik2',
+    models: ['kimik-v2-chat'], // Placeholder free model
   },
   {
     provider: 'ollama',

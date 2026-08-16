@@ -25,7 +25,7 @@ export function FollowUpEmailPage() {
 
   return (
     <>
-      <Header title="Resume Builder" />
+      <Header title="Job Ready.AI" />
       <div className="app-layout">
         <LeftSidebar />
         <FollowUpPanel onGenerate={handleGenerate} isLoading={isGenerating} />

@@ -25,7 +25,7 @@ export function HomePage() {
 
   return (
     <>
-      <Header title="Resume Builder" />
+      <Header title="Job Ready.AI" />
       <div className="app-layout">
         <LeftSidebar
           onHistorySelect={handleHistorySelect}

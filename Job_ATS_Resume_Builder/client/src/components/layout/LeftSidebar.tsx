@@ -60,26 +60,34 @@ export function LeftSidebar({ onHistorySelect, activeHistoryId }: LeftSidebarPro
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
+  const handleToolNav = (path: string) => {
+    if (!activeConnection) {
+      alert('Please setup your LLM connection first in Settings.');
+      return;
+    }
+    navigate(path);
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar__section" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
         <button 
-          className={`sidebar__nav-btn ${location.pathname === '/' ? 'sidebar__nav-btn--active' : ''}`}
-          onClick={() => navigate('/')}
+          className={`sidebar__nav-btn sidebar__nav-btn--ats ${location.pathname === '/' ? 'sidebar__nav-btn--active' : ''}`}
+          onClick={() => handleToolNav('/')}
         >
           <FileSearch size={18} />
           ATS Resume Scanner
         </button>
         <button 
-          className={`sidebar__nav-btn ${location.pathname === '/cover-letter' ? 'sidebar__nav-btn--active' : ''}`}
-          onClick={() => navigate('/cover-letter')}
+          className={`sidebar__nav-btn sidebar__nav-btn--cover ${location.pathname === '/cover-letter' ? 'sidebar__nav-btn--active' : ''}`}
+          onClick={() => handleToolNav('/cover-letter')}
         >
           <FileText size={18} />
           Cover Letter
         </button>
         <button 
-          className={`sidebar__nav-btn ${location.pathname === '/follow-up-email' ? 'sidebar__nav-btn--active' : ''}`}
-          onClick={() => navigate('/follow-up-email')}
+          className={`sidebar__nav-btn sidebar__nav-btn--email ${location.pathname === '/follow-up-email' ? 'sidebar__nav-btn--active' : ''}`}
+          onClick={() => handleToolNav('/follow-up-email')}
         >
           <Mail size={18} />
           Follow Up Email
@@ -111,9 +119,10 @@ export function LeftSidebar({ onHistorySelect, activeHistoryId }: LeftSidebarPro
         </div>
         <div className="history-list">
           {history.length === 0 ? (
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', padding: '0.5rem', textAlign: 'center' }}>
-              No analysis yet
-            </p>
+            <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>No analysis yet</p>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>Your scans will appear here</p>
+            </div>
           ) : (
             history.map((item) => (
               <div
@@ -134,7 +143,20 @@ export function LeftSidebar({ onHistorySelect, activeHistoryId }: LeftSidebarPro
         </div>
       </div>
 
-      <div className="sidebar__bottom">
+      <div style={{ padding: '1rem', marginTop: 'auto' }}>
+        <div style={{ background: 'var(--accent-purple)', borderRadius: '12px', padding: '1.25rem', textAlign: 'left', position: 'relative', overflow: 'hidden' }}>
+          <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>Stand Out. Get Noticed.</h4>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '1rem', lineHeight: 1.4 }}>
+            AI-powered insights to boost your profile and land more interviews.
+          </p>
+          <button className="btn btn--primary btn--sm" style={{ padding: '0.5rem 1rem' }}>Learn More</button>
+          <div style={{ position: 'absolute', bottom: '-10px', right: '-10px', fontSize: '48px', opacity: 0.2 }}>
+            🚀
+          </div>
+        </div>
+      </div>
+
+      <div className="sidebar__bottom" style={{ marginTop: 0 }}>
         <button className="sidebar__nav-btn" onClick={toggleTheme}>
           {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}

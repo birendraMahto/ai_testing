@@ -16,5 +16,14 @@
     "apiKey": "",
     "createdAt": "2026-07-11T14:40:26.481Z",
     "updatedAt": "2026-07-11T15:07:29.649Z"
+  },
+  {
+    "id": "c2730aaa-2064-4d3c-be69-93ebdfecf973",
+    "connectionName": "My Local LLM",
+    "provider": "ollama",
+    "modelName": "gemma:7b",
+    "apiKey": "",
+    "createdAt": "2026-08-16T09:59:27.025Z",
+    "updatedAt": "2026-08-16T09:59:27.025Z"
   }
 ]

@@ -9,7 +9,7 @@ export interface LLMConnection {
   updatedAt: string;
 }
 
-export type LLMProvider = 'openai' | 'anthropic' | 'gemini';
+export type LLMProvider = 'openai' | 'anthropic' | 'gemini' | 'groq' | 'kimik2' | 'ollama' | 'lmstudio';
 
 export interface ProviderModels {
   provider: LLMProvider;

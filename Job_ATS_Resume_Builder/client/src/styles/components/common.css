@@ -7,7 +7,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.625rem 1.25rem;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 10px;
   font-family: inherit;
   font-size: 0.8125rem;
@@ -28,6 +28,7 @@
   background: var(--accent-gradient);
   color: #ffffff;
   box-shadow: var(--shadow-sm);
+  border: 1px solid transparent;
 }
 
 .btn--primary:hover:not(:disabled) {
@@ -39,12 +40,12 @@
 .btn--secondary {
   background: var(--bg-tertiary);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color-hover);
 }
 
 .btn--secondary:hover:not(:disabled) {
   background: var(--bg-hover);
-  border-color: var(--border-color-hover);
+  border-color: var(--text-muted);
 }
 
 .btn--success {
@@ -68,13 +69,15 @@
 }
 
 .btn--ghost {
-  background: transparent;
+  background: var(--bg-hover);
   color: var(--text-secondary);
+  border: 1px solid transparent;
 }
 
 .btn--ghost:hover:not(:disabled) {
-  background: var(--bg-hover);
+  background: var(--bg-tertiary);
   color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 .btn--sm {
