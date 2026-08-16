@@ -11,15 +11,47 @@ class ToolService {
       throw new Error('Ticket ID is required');
     }
 
-    if (toolConnection && toolConnection.url && toolConnection.url.includes('http')) {
+    if (toolConnection && toolConnection.url && toolConnection.url.toLowerCase() !== 'mock') {
       try {
-        const parsedUrl = new URL(toolConnection.url);
-        const baseUrl = parsedUrl.origin;
-        // Use API v2 so description is a plain string/markdown rather than ADF JSON
-        const url = `${baseUrl}/rest/api/2/issue/${ticketId}`;
-        const authHeader = `Basic ${Buffer.from(`${toolConnection.email}:${toolConnection.token}`).toString('base64')}`;
+        let cleanTicketId = ticketId.trim();
         
-        const response = await fetch(url, {
+        // If user pasted a full URL in the Ticket ID field, extract the ID
+        if (cleanTicketId.includes('http')) {
+          try {
+             const parsed = new URL(cleanTicketId);
+             const pathParts = parsed.pathname.split('/');
+             cleanTicketId = pathParts[pathParts.length - 1];
+          } catch(e) {}
+        }
+
+        let baseToolUrl = toolConnection.url.trim().replace(/\/+$/, '');
+        if (!baseToolUrl.startsWith('http')) {
+           baseToolUrl = `https://${baseToolUrl}`;
+        }
+        const isAdo = baseToolUrl.includes('dev.azure.com') || baseToolUrl.includes('visualstudio.com');
+        
+        let fetchUrl = '';
+        let authHeader = '';
+
+        if (isAdo) {
+          // ADO Logic
+          baseToolUrl = baseToolUrl.replace(/\/_workitems\/?.*$/, '');
+          fetchUrl = `${baseToolUrl}/_apis/wit/workitems/${cleanTicketId}?api-version=7.1`;
+          authHeader = `Basic ${Buffer.from(`:${toolConnection.token.trim()}`).toString('base64')}`; 
+        } else {
+          // Jira Logic
+          cleanTicketId = cleanTicketId.toUpperCase();
+          baseToolUrl = baseToolUrl.replace(/\/browse\/?.*$/, '');
+          fetchUrl = `${baseToolUrl}/rest/api/2/issue/${cleanTicketId}`;
+          const safeEmail = toolConnection.email ? toolConnection.email.trim() : '';
+          const safeToken = toolConnection.token ? toolConnection.token.trim() : '';
+          authHeader = `Basic ${Buffer.from(`${safeEmail}:${safeToken}`).toString('base64')}`;
+        }
+        
+        console.log(`[Tool Fetch] Attempting to fetch URL: ${fetchUrl}`);
+        console.log(`[Tool Fetch] Using email: ${toolConnection.email}`);
+        
+        const response = await fetch(fetchUrl, {
           method: 'GET',
           headers: {
             'Authorization': authHeader,
@@ -27,31 +59,56 @@ class ToolService {
           }
         });
 
+        console.log(`[Tool Fetch] Response status: ${response.status} ${response.statusText}`);
+
         if (!response.ok) {
-          throw new Error(`Jira API returned ${response.status}: ${response.statusText}`);
+          let jiraErrorMsg = `${response.statusText}`;
+          try {
+             const errorData = await response.json();
+             if (errorData.errorMessages && errorData.errorMessages.length > 0) {
+                 jiraErrorMsg = errorData.errorMessages.join(', ');
+             } else if (errorData.message) {
+                 jiraErrorMsg = errorData.message;
+             }
+          } catch(e) {}
+          throw new Error(`${isAdo ? 'ADO' : 'Jira'} API returned ${response.status}: ${jiraErrorMsg}`);
         }
 
         const contentType = response.headers.get('content-type');
         if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Jira returned HTML instead of JSON. This usually means your Email or API Token is incorrect, causing a redirect to the login page.');
+          throw new Error('API returned HTML instead of JSON. This usually means your credentials are incorrect.');
         }
 
         const data = await response.json();
         
-        return {
-          id: data.key,
-          title: data.fields.summary || `Ticket ${data.key}`,
-          type: data.fields.issuetype?.name || 'Unknown',
-          priority: data.fields.priority?.name || 'None',
-          status: data.fields.status?.name || 'Unknown',
-          assignee: data.fields.assignee?.displayName || 'Unassigned',
-          description: data.fields.description || 'No description provided.',
-          acceptanceCriteria: [], // Custom field in Jira, difficult to map generically without knowing the custom field ID
-          createdAt: data.fields.created
-        };
+        if (isAdo) {
+           return {
+             id: data.id,
+             title: data.fields['System.Title'] || `Ticket ${data.id}`,
+             type: data.fields['System.WorkItemType'] || 'Unknown',
+             priority: data.fields['Microsoft.VSTS.Common.Priority'] || 'None',
+             status: data.fields['System.State'] || 'Unknown',
+             assignee: data.fields['System.AssignedTo']?.displayName || 'Unassigned',
+             description: data.fields['System.Description'] || 'No description provided.',
+             acceptanceCriteria: [], 
+             createdAt: data.fields['System.CreatedDate']
+           };
+        } else {
+           return {
+             id: data.key,
+             title: data.fields.summary || `Ticket ${data.key}`,
+             type: data.fields.issuetype?.name || 'Unknown',
+             priority: data.fields.priority?.name || 'None',
+             status: data.fields.status?.name || 'Unknown',
+             assignee: data.fields.assignee?.displayName || 'Unassigned',
+             description: data.fields.description || 'No description provided.',
+             acceptanceCriteria: [], 
+             createdAt: data.fields.created
+           };
+        }
       } catch (err) {
-        console.error('Error fetching from Jira:', err.message);
-        throw new Error(`Failed to fetch from Jira: ${err.message}. Please check your Tool URL, Email, and API Token.`);
+        console.error('Error fetching from Tool:', err.message);
+        throw new Error(`Failed to fetch: ${err.message}. Please check your Tool URL, Email, and API Token.`);
       }
     }
 

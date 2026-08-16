@@ -8,19 +8,19 @@ TestingBuddy.AI is your intelligent test management companion that helps QA and 
 - **Defect Intelligence**: Auto-categorize, prioritize & analyze defects to find issues faster.
 - **Test Case Generation**: Generate, organize & reuse test cases with intelligent recommendations.
 - **Release Confidence**: Generate release notes instantly and communicate changes with clarity.
-- **Jira Integration**: Native integration with Jira to fetch real-time ticket details.
+- **Jira & ADO Integration**: Native integration with Jira and Azure DevOps (ADO) to fetch real-time ticket details automatically.
 - **Local & Remote LLMs**: Support for Ollama local models and remote API LLMs.
 
 ## Technology Stack
 - **Frontend**: React, Vite, TypeScript, Lucide React
-- **Backend**: Node.js, Express, Jira API, Ollama REST API
+- **Backend**: Node.js, Express, Jira API, ADO API, Ollama REST API
 
 ## Getting Started
 
 ### Prerequisites
 - Node.js (v16+)
 - Ollama (installed locally if using local models)
-- A Test Management Tool (Jira) account and API Token
+- A Test Management Tool (Jira or ADO) account and API Token / PAT
 
 ### Setup Instructions
 
@@ -28,7 +28,7 @@ TestingBuddy.AI is your intelligent test management companion that helps QA and 
    ```bash
    cd api
    npm install
-   # Start the server (runs on port 3000)
+   # Start the server (runs on port 3001)
    node server.js
    ```
 
@@ -36,7 +36,7 @@ TestingBuddy.AI is your intelligent test management companion that helps QA and 
    ```bash
    cd web
    npm install
-   # Start the dev server (runs on port 5174)
+   # Start the dev server (runs on port 5173)
    npm run dev
    ```
 

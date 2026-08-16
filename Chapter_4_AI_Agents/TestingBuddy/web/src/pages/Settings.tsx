@@ -102,18 +102,52 @@ const Settings = () => {
     setLlmConnectionName(''); setLlmProvider(''); setLlmModel(''); setLlmToken(''); setLlmTestStatus('none');
   };
 
-  const handleScanLocalLLM = () => {
+  const handleScanLocalLLM = async () => {
     setIsScanning(true);
-    setTimeout(() => {
-      setScannedData({
-        'Ollama': ['llama3:latest', 'mistral:latest', 'phi3:latest'],
-        'LMStudio': ['qwen-2-7b', 'llama-3-8b-instruct', 'gemma-2b']
-      });
-      setLlmProvider('Ollama');
-      setLlmModel('llama3:latest');
-      setActiveLlmSubTab('add');
+    try {
+      const scanned: Record<string, string[]> = {};
+      
+      // Try Ollama
+      try {
+        const ollamaRes = await fetch('http://localhost:11434/api/tags');
+        if (ollamaRes.ok) {
+          const data = await ollamaRes.json();
+          if (data.models && Array.isArray(data.models)) {
+            scanned['Ollama'] = data.models.map((m: any) => m.name);
+          }
+        }
+      } catch (e) {
+        console.warn('Ollama not reachable', e);
+      }
+
+      // Try LM Studio
+      try {
+        const lmRes = await fetch('http://localhost:1234/v1/models');
+        if (lmRes.ok) {
+          const data = await lmRes.json();
+          if (data.data && Array.isArray(data.data)) {
+            scanned['LMStudio'] = data.data.map((m: any) => m.id);
+          }
+        }
+      } catch (e) {
+        console.warn('LM Studio not reachable', e);
+      }
+
+      if (Object.keys(scanned).length > 0) {
+        setScannedData(scanned);
+        const firstProvider = Object.keys(scanned)[0];
+        setLlmProvider(firstProvider);
+        setLlmModel(scanned[firstProvider][0]);
+      } else {
+        alert("No local LLMs found. Ensure Ollama or LM Studio is running and CORS is enabled.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error scanning local LLMs");
+    } finally {
       setIsScanning(false);
-    }, 1500);
+      setActiveLlmSubTab('add');
+    }
   };
 
   return (

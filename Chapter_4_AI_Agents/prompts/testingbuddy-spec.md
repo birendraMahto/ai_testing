@@ -41,7 +41,8 @@ Opens in center panel. Top tabs: **Test Management Tool** | **LLM Connection**
 - Logic: same pattern as 4a.
 
 ## 5. Artifact Generation Pages (Test Strategy, Test Plan, Defect Report, Test Cases, Release Note)
-- **Ticket Details:** Entering a Jira ID and clicking Fetch Details will call the backend to retrieve actual Jira fields (Summary, Description, Assignee, Status) and present them in a scrollable view.
+- **Ticket Details:** Entering a Ticket ID and clicking Fetch Details will call the backend to retrieve actual fields (Summary, Description, Assignee, Status) and present them in a scrollable view.
+  - **Tool Fetching Robustness:** The backend must support both **Jira** and **Azure DevOps (ADO)** APIs. It should gracefully handle full URLs pasted in the Ticket ID field, strip trailing subpaths (like `/browse` or `/_workitems`) from Tool URLs, auto-uppercase Jira ticket keys, and automatically prepend `https://` if omitted. It should surface specific API errors to the frontend.
 - **Generation Options:** Section with checkboxes for various parameters (e.g. Include Test Cases, Functional Tests, etc.).
 - **Generate:** Clicking Generate talks to the configured LLM engine and returns a fully detailed Markdown response.
 - **Preview & Download:** After successful generation, the UI provides **separate** buttons for Preview and Download.
