@@ -17,7 +17,9 @@ const Sidebar = () => {
   return (
     <div className="glass-panel" style={{ width: '260px', display: 'flex', flexDirection: 'column', height: '100%', borderRight: '1px solid var(--border-color)', borderTop: 'none', borderBottom: 'none', borderLeft: 'none', borderRadius: 0 }}>
       <div style={{ height: '73px', padding: '0 1.5rem', display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border-color)' }}>
-        <img src="/logo.jpg" alt="TestingBuddy.AI Logo" style={{ height: '40px', width: 'auto' }} />
+        <NavLink to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+          <img src="/logo.jpg" alt="TestingBuddy.AI Logo" style={{ height: '40px', width: 'auto' }} />
+        </NavLink>
       </div>
 
       <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: '1.5rem 1rem' }}>

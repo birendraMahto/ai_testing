@@ -41,10 +41,13 @@ Opens in center panel. Top tabs: **Test Management Tool** | **LLM Connection**
 - Logic: same pattern as 4a.
 
 ## 5. Artifact Generation Pages (Test Strategy, Test Plan, Defect Report, Test Cases, Release Note)
-- **Ticket Details:** Entering a Ticket ID and clicking Fetch Details will call the backend to retrieve actual fields (Summary, Description, Assignee, Status) and present them in a scrollable view.
-  - **Tool Fetching Robustness:** The backend must support both **Jira** and **Azure DevOps (ADO)** APIs. It should gracefully handle full URLs pasted in the Ticket ID field, strip trailing subpaths (like `/browse` or `/_workitems`) from Tool URLs, auto-uppercase Jira ticket keys, and automatically prepend `https://` if omitted. It should surface specific API errors to the frontend.
-- **Generation Options:** Section with checkboxes for various parameters (e.g. Include Test Cases, Functional Tests, etc.).
-- **Generate:** Clicking Generate talks to the configured LLM engine and returns a fully detailed Markdown response.
-- **Preview & Download:** After successful generation, the UI provides **separate** buttons for Preview and Download.
-  - Preview [Document]: Opens a sleek modal overlay with the rendered Markdown.
-  - Download [Document]: Immediately exports the generated content as a file (Word/PDF/CSV/Excel depending on the document type).
+- **Universal Tabbed Layout:** Each page features a "With Ticket ID" and "Without Ticket ID" tab located directly under the page heading.
+- **With Ticket ID:** Users enter a Ticket ID and fetch details. The backend supports both Jira and Azure DevOps (ADO) APIs, gracefully handles full URLs, auto-uppercases keys, and surfaces API errors.
+- **Without Ticket ID:** Users can paste raw requirement text into a text area or attach a `.pdf`, `.docx`, or `.txt` document to have its contents seamlessly parsed natively by the backend via `pdf-parse` and `mammoth`.
+- **Custom Templates & Strict Compliance:** Below the ticket details or requirement text, users can check "Generate Document from Template" to upload a custom template.
+  - The backend forces the LLM to **100% strictly adhere** to the exact structure, headings, and tables of the selected template. If no custom template is uploaded, it falls back to the default industry-standard templates provided in the `@templates` directory.
+- **Smart Generation & Inclusions:** Users can select generation options (e.g. Include Functional Tests, Security Tests). Clicking Generate instructs the LLM to produce enterprise-level markdown documents.
+- **Preview & Download:** 
+  - Preview opens a sleek modal overlay with the rendered Markdown for the primary document or the generated inclusion test cases.
+  - Download immediately exports the primary document as `.docx`.
+  - **Inclusions:** Clicking "Download Inclusion" dynamically triggers batch downloads of separate, well-formatted `.docx` files for every selected inclusion type (e.g. Functional Tests, Regression Tests) conforming perfectly to the test case templates.

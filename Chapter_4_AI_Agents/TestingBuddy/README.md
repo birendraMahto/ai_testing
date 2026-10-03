@@ -3,11 +3,10 @@
 TestingBuddy.AI is your intelligent test management companion that helps QA and development teams plan, design, execute, and track testing with the power of AI.
 
 ## Features
-- **AI-Powered Test Strategy**: Generate intelligent test strategies tailored to your project and risks.
-- **Smart Test Planning**: Create comprehensive test plans in minutes with AI assistance.
-- **Defect Intelligence**: Auto-categorize, prioritize & analyze defects to find issues faster.
-- **Test Case Generation**: Generate, organize & reuse test cases with intelligent recommendations.
-- **Release Confidence**: Generate release notes instantly and communicate changes with clarity.
+- **Flexible Document Generation**: Create strategies and plans by seamlessly fetching Jira/ADO tickets OR by directly pasting text and uploading requirement `.pdf`/`.docx`/`.txt` files on the "Without Ticket ID" tab.
+- **Custom AI Templates**: Upload your own enterprise templates and the AI will **100% strictly adhere** to their structure and formatting.
+- **Smart Test Planning & Inclusions**: Automatically generate and batch-download separate, enterprise-grade test cases for Functional, Regression, Performance, and Security tests simultaneously.
+- **Defect Intelligence & Release Confidence**: Auto-categorize defects and generate release notes instantly.
 - **Jira & ADO Integration**: Native integration with Jira and Azure DevOps (ADO) to fetch real-time ticket details automatically.
 - **Local & Remote LLMs**: Support for Ollama local models and remote API LLMs.
 

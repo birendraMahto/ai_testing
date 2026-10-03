@@ -28,11 +28,11 @@ app.post('/api/tickets/fetch', async (req, res) => {
   }
 });
 
-// Generate Test Plan
-app.post('/api/generate/test-plan', async (req, res) => {
+// Generate Document
+app.post('/api/generate/document', async (req, res) => {
   try {
-    const { ticketDetails, options, llmConnection } = req.body;
-    const result = await llmService.generateTestPlan(ticketDetails, options, llmConnection);
+    const { ticketDetails, options, llmConnection, documentType } = req.body;
+    const result = await llmService.generateDocument(ticketDetails, options, llmConnection, documentType);
     res.json(result);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -62,6 +62,45 @@ app.post('/api/download/cases', async (req, res) => {
     res.send(buffer);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+const multer = require('multer');
+const fs = require('fs');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
+
+const upload = multer({ dest: 'uploads/' });
+
+// Extract text from uploaded document
+app.post('/api/extract-text', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const filePath = req.file.path;
+    const originalName = req.file.originalname.toLowerCase();
+    let text = '';
+
+    if (originalName.endsWith('.pdf')) {
+      const dataBuffer = fs.readFileSync(filePath);
+      const data = await pdfParse(dataBuffer);
+      text = data.text;
+    } else if (originalName.endsWith('.docx')) {
+      const result = await mammoth.extractRawText({ path: filePath });
+      text = result.value;
+    } else if (originalName.endsWith('.txt') || originalName.endsWith('.md')) {
+      text = fs.readFileSync(filePath, 'utf8');
+    } else {
+      fs.unlinkSync(filePath); // Cleanup
+      return res.status(400).json({ error: 'Unsupported file type. Please upload a PDF, DOCX, or TXT file.' });
+    }
+
+    fs.unlinkSync(filePath); // Cleanup
+    res.json({ text });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to extract text from file' });
   }
 });
 

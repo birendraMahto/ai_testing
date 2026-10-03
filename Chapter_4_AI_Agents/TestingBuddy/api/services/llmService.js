@@ -1,65 +1,170 @@
+const fs = require('fs');
+const path = require('path');
+const mammoth = require('mammoth');
+
 class LLMService {
-  /**
-   * Mock generating a test plan using an LLM.
-   */
-  async generateTestPlan(ticketDetails, options, llmConnection) {
-    // Simulate network delay of an LLM generation
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    const testPlan = {
-      title: `Test Strategy & Plan: ${ticketDetails.id} - ${ticketDetails.title}`,
-      objective: `To ensure comprehensive validation of the feature outlined in ${ticketDetails.id}, confirming that it meets all business requirements, acceptance criteria, and quality standards.`,
-      scope: `
-# 1. Scope of Testing
-This test strategy covers all new functionalities introduced in ${ticketDetails.id}. 
-- **In Scope**: Functional testing of core user flows, integration testing with downstream dependencies, UI/UX validation across supported browsers, and performance testing under expected peak loads.
-- **Out of Scope**: Third-party payment gateways (tested via mocks), physical hardware integrations, and legacy endpoints not impacted by this change.
-
-# 2. Test Approach
-We will employ a multi-layered testing approach:
-1. **Unit Testing**: Conducted by developers using Jest. Target coverage is >80%.
-2. **Integration Testing**: Automated tests running in the CI/CD pipeline using Postman/Newman.
-3. **System Testing**: End-to-end flows executed via Cypress.
-4. **User Acceptance Testing (UAT)**: Manual exploratory testing performed by the QA and Product teams.
-
-# 3. Environment & Tools
-- **Test Environments**: QA (staging), UAT (pre-prod)
-- **Tools**: Jira for defect tracking, GitHub Actions for CI/CD execution, Cypress for E2E, JMeter for load testing.
-
-# 4. Defect Management
-Any bugs discovered will be logged in Jira with a link back to ${ticketDetails.id}.
-- **Blocker**: System is unusable. Must be fixed before any further testing.
-- **Critical**: Core functionality broken. High priority fix.
-- **Major**: Non-core functionality broken, workaround exists.
-- **Minor**: UI/UX glitches, typos. Fix before release if time permits.
-
-# 5. Entry & Exit Criteria
-- **Entry**: Code complete, unit tests passed, deployed to QA environment.
-- **Exit**: All planned test cases executed, 0 Blocker/Critical defects open, UAT sign-off obtained.
-      `,
-      generatedAt: new Date().toISOString()
+  async generateDocument(ticketDetails, options, llmConnection, documentType, customTemplate) {
+    // Map documentType to exact template filename from the user prompt
+    const templateMap = {
+      'test-strategy': 'test_strategy_template.md',
+      'test-plan': 'Test Plan - Template.docx',
+      'defect-report': 'defect_report_template.md',
+      'test-cases': 'test_case_template.md',
+      'release-note': 'release_note_template.md'
     };
 
-    let testCases = [];
-    if (options.includeTestCases) {
-      if (options.functional) {
-         testCases.push({ id: 'TC-01', description: 'Verify happy path functionality.', type: 'Functional', category: 'Positive' });
-         testCases.push({ id: 'TC-02', description: 'Verify error handling for invalid inputs.', type: 'Functional', category: 'Negative' });
+    const templateFileName = templateMap[documentType] || 'test_plan_template.md';
+    const templatePath = path.join(__dirname, '../../../templates', templateFileName);
+    
+    let templateContent = '';
+    
+    if (customTemplate) {
+       templateContent = customTemplate;
+    } else {
+       try {
+         if (fs.existsSync(templatePath)) {
+           if (templateFileName.endsWith('.docx')) {
+              const result = await mammoth.extractRawText({ path: templatePath });
+              templateContent = result.value;
+           } else {
+              templateContent = fs.readFileSync(templatePath, 'utf8');
+           }
+         } else {
+           console.warn(`Template not found at ${templatePath}`);
+         }
+       } catch (err) {
+         console.error('Error reading template:', err);
+       }
+    }
+
+    const systemPrompt = `You are an expert QA and Testing Assistant. 
+Your task is to generate a comprehensive ${documentType.replace('-', ' ')} using the ticket details provided below.
+
+CRITICAL INSTRUCTIONS:
+1. You MUST follow the EXACT structure of the "REQUIRED TEMPLATE FORMAT" provided below.
+2. DO NOT skip any headings, tables, or sections from the template. Keep every single markdown heading and structure intact.
+3. Replace all placeholders (like [Project Name], [Version], etc.) and italicized instructional text with actual, professional content derived from the TICKET DETAILS.
+4. If a specific section does not have directly matching information in the ticket, infer reasonable, professional industry-standard defaults based on the ticket context, or mark it as N/A. DO NOT delete the section.
+5. Provide your output strictly as the populated markdown document. Do not include introductory or concluding conversational text.
+
+--- TICKET DETAILS ---
+ID: ${ticketDetails.id}
+Title: ${ticketDetails.title}
+Status: ${ticketDetails.status}
+Assignee: ${ticketDetails.assignee}
+Priority: ${ticketDetails.priority}
+Type: ${ticketDetails.type}
+Description: ${ticketDetails.description}
+Acceptance Criteria: ${ticketDetails.acceptanceCriteria?.join(', ')}
+
+--- REQUIRED TEMPLATE FORMAT ---
+${templateContent}
+`;
+
+    let generatedMarkdown = '';
+
+    // If an LLM connection is provided, call it
+    if (llmConnection && llmConnection.status === 'success') {
+      try {
+        if (llmConnection.type === 'local') {
+          // Ollama Local LLM Call
+          const ollamaUrl = llmConnection.url || 'http://localhost:11434';
+          const response = await fetch(`${ollamaUrl}/api/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              model: llmConnection.modelName,
+              prompt: systemPrompt,
+              stream: false
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Ollama API error: ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          generatedMarkdown = data.response;
+        } else {
+          // Remote LLM (Placeholder for OpenAI, Anthropic, etc.)
+          generatedMarkdown = `# Generated ${documentType}\n\n(Remote LLM logic not yet fully implemented. Prompt would be:\n\n${systemPrompt.substring(0, 200)}...)`;
+        }
+      } catch (err) {
+        console.error('LLM Generation Error:', err);
+        generatedMarkdown = `# Error Generating Document\nThere was an error communicating with the LLM. \nError: ${err.message}`;
       }
-      if (options.security) {
-         testCases.push({ id: 'TC-03', description: 'Verify SQL injection is prevented.', type: 'Security', category: 'Edge' });
+    } else {
+      // Fallback if no LLM is connected, just return a mocked version of the template
+      generatedMarkdown = `# Mock Generated ${documentType}\n\n(No LLM Connected. Below is the raw template format)\n\n${templateContent}`;
+    }
+
+    let inclusions = {};
+    if (options && options.includeTestCases) {
+      const inclusionTypes = [];
+      if (options.functional) inclusionTypes.push('Functional');
+      if (options.regression) inclusionTypes.push('Regression');
+      if (options.performance) inclusionTypes.push('Performance');
+      if (options.security) inclusionTypes.push('Security');
+
+      let testCaseTemplateContent = '';
+      try {
+        const tcTemplatePath = path.join(__dirname, '../../../templates', 'test_case_template.md');
+        if (fs.existsSync(tcTemplatePath)) {
+          testCaseTemplateContent = fs.readFileSync(tcTemplatePath, 'utf8');
+        }
+      } catch (e) {
+        console.error('Error reading test case template:', e);
       }
-      if (options.performance) {
-         testCases.push({ id: 'TC-04', description: 'Verify API responds within 200ms.', type: 'Performance', category: 'Positive' });
-      }
-      if (options.regression) {
-         testCases.push({ id: 'TC-05', description: 'Verify old endpoints are unaffected.', type: 'Regression', category: 'Positive' });
+
+      for (const incType of inclusionTypes) {
+         const incPrompt = `You are an expert QA and Testing Assistant.
+Your task is to generate a comprehensive, enterprise-level ${incType} Test Cases document for the provided ticket details.
+
+CRITICAL INSTRUCTIONS:
+1. You MUST follow the EXACT structure of the "REQUIRED TEMPLATE FORMAT" provided below.
+2. DO NOT skip any headings, tables, or sections from the template. Keep every single markdown heading and structure intact.
+3. Replace all placeholders (like [Project Name], [Version], etc.) and italicized instructional text with actual, professional ${incType} test cases derived from the TICKET DETAILS.
+4. Ensure the test case table is fully populated with at least 3-5 comprehensive ${incType} test cases.
+5. Provide your output strictly as the populated markdown document. Do not include introductory or concluding conversational text.
+
+--- TICKET DETAILS ---
+Title: ${ticketDetails.title}
+Description: ${ticketDetails.description}
+Acceptance Criteria: ${ticketDetails.acceptanceCriteria?.join(', ') || 'N/A'}
+
+--- REQUIRED TEMPLATE FORMAT ---
+${testCaseTemplateContent || '| TC ID | Description | Pre-conditions | Steps | Expected Results | Status |\n|---|---|---|---|---|---|'}
+`;
+
+         let incMarkdown = '';
+         if (llmConnection && llmConnection.status === 'success' && llmConnection.type === 'local') {
+           try {
+              const ollamaUrl = llmConnection.url || 'http://localhost:11434';
+              const response = await fetch(`${ollamaUrl}/api/generate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  model: llmConnection.modelName,
+                  prompt: incPrompt,
+                  stream: false
+                })
+              });
+              if (!response.ok) throw new Error('API Error');
+              const data = await response.json();
+              incMarkdown = data.response;
+           } catch(e) {
+              incMarkdown = `# Error Generating ${incType} Cases\n${e.message}`;
+           }
+         } else {
+            incMarkdown = `# Mock ${incType} Test Cases\n\n| TC ID | Description | Pre-conditions | Steps | Expected Results | Status |\n|---|---|---|---|---|---|\n| TC-${incType}-01 | Verify basic functionality | System is online | 1. Execute function | Function executes successfully | Untested |`;
+         }
+         inclusions[incType] = incMarkdown;
       }
     }
 
     return {
-      plan: testPlan,
-      cases: testCases
+      plan: generatedMarkdown,
+      inclusions: inclusions
     };
   }
 }
